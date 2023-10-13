@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,9 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import LoginForm from './login-form';
+import RegisterForm from './register-form';
 
 type AuthDialogProps = {
   isAuthDialogOpen: boolean;
@@ -24,6 +24,16 @@ export function AuthDialog({
 }: AuthDialogProps) {
   const [isRegisterForm, setIsRegisterForm] = useState(false);
   const [authError, setAuthError] = useState('');
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  const onSubmit = ({ email, password }) => {
+    console.log(email, password);
+  };
 
   return (
     <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
@@ -39,82 +49,7 @@ export function AuthDialog({
               : 'Login to your account.'}
           </DialogDescription>
         </DialogHeader>
-        {isRegisterForm ? (
-          <form className="space-y-3">
-            <fieldset className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
-                <p className="text-sm text-red-500/80">
-                  * this is a error message
-                </p>
-              </div>
-              <Input id="name" className="col-span-3" />
-            </fieldset>
-            <fieldset className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="email" className="text-right">
-                  Email
-                </Label>
-                <p className="text-sm text-red-500/80">
-                  * this is a error message
-                </p>
-              </div>
-              <Input id="email" className="col-span-3" />
-            </fieldset>
-            <fieldset className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-right">
-                  Password
-                </Label>
-                <p className="text-sm text-red-500/80">
-                  * this is a error message
-                </p>
-              </div>
-              <Input id="password" type="password" className="col-span-3" />
-            </fieldset>
-            <div className="text-sm text-red-500/80 bg-red-500/20 rounded py-2 px-3 border border-red-500/20">
-              this is a error message from firebase bitch! brand new brand new!
-            </div>
-            <div className="flex flex-col w-full gap-2">
-              <Button type="submit">Register</Button>
-              <Button type="button">Continue With Google</Button>
-            </div>
-          </form>
-        ) : (
-          <form className="space-y-3">
-            <fieldset className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="email" className="text-right">
-                  Email
-                </Label>
-                <p className="text-sm text-red-500/80">
-                  * this is a error message
-                </p>
-              </div>
-              <Input id="email" className="col-span-3" />
-            </fieldset>
-            <fieldset className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-right">
-                  Password
-                </Label>
-                <p className="text-sm text-red-500/80">
-                  * this is a error message
-                </p>
-              </div>
-              <Input id="password" type="password" className="col-span-3" />
-            </fieldset>
-            <div className="text-sm text-red-500/80 bg-red-500/20 rounded py-2 px-3 border border-red-500/20">
-              this is a error message from firebase bitch! brand new brand new!
-            </div>
-            <div className="flex flex-col w-full gap-2">
-              <Button type="submit">Register</Button>
-              <Button type="button">Continue With Google</Button>
-            </div>
-          </form>
-        )}
+        {isRegisterForm ? <RegisterForm /> : <LoginForm />}
         <DialogFooter className="sm:justify-center ">
           {isRegisterForm ? (
             <p className="text-sm text-center">

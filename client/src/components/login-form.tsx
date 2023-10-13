@@ -1,50 +1,39 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { auth } from '@/firebase/firebase.config';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { Loader } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import GoogleAuthButton from './google-auth-button';
+import { auth } from '@/firebase/firebase.config';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { z } from 'zod';
+import { Loader } from 'lucide-react';
 
-const RegisterForm = () => {
+const LoginForm = () => {
   const [authError, setAuthError] = useState('');
 
-  const RegisterFormSchema = z.object({
-    name: z.string().min(3, { message: 'Min length 3' }),
+  const LoginFormSchema = z.object({
     email: z.string(),
     password: z.string(),
   });
 
-  type RegisterFormSchemaType = z.infer<typeof RegisterFormSchema>;
+  type LoginFormSchemaType = z.infer<typeof LoginFormSchema>;
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterFormSchemaType>({
-    resolver: zodResolver(RegisterFormSchema),
+  } = useForm<LoginFormSchemaType>({
+    resolver: zodResolver(LoginFormSchema),
   });
 
-  const onSubmit = async ({
-    email,
-    password,
-    name,
-  }: RegisterFormSchemaType) => {
+  const onSubmit = async ({ email, password }: LoginFormSchemaType) => {
     try {
       setAuthError('');
 
-      await createUserWithEmailAndPassword(auth, email, password);
-
-      if (auth.currentUser) {
-        await updateProfile(auth.currentUser, {
-          displayName: name,
-        });
-      }
+      await signInWithEmailAndPassword(auth, email, password);
 
       reset();
     } catch (error) {
@@ -57,20 +46,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
-      <fieldset className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="name" className="text-right">
-            Name
-          </Label>
-          {errors?.name?.message ? (
-            <p className="text-sm text-red-500/80">
-              {`* ${errors.name.message}`}
-            </p>
-          ) : null}
-        </div>
-        <Input id="name" {...register('name')} />
-      </fieldset>
+    <form className="space-y-3">
       <fieldset className="space-y-2.5">
         <div className="flex items-center justify-between">
           <Label htmlFor="email" className="text-right">
@@ -104,7 +80,7 @@ const RegisterForm = () => {
       ) : null}
       <div className="flex flex-col w-full gap-2">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? <Loader className="animate-spin" /> : 'Register'}
+          {isSubmitting ? <Loader className="animate-spin" /> : 'Login'}
         </Button>
         <GoogleAuthButton />
       </div>
@@ -112,4 +88,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

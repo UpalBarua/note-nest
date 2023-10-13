@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { AuthContextProvider } from '@/context/auth-context';
+import { useContext } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,8 +28,10 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <Navbar />
-          {children}
+          <AuthContextProvider>
+            <Navbar />
+            {children}
+          </AuthContextProvider>
         </ThemeProvider>
       </body>
     </html>
